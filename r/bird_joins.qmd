@@ -1,0 +1,49 @@
+---
+title: "bird_joins"
+author: "mish"
+format: html
+editor_options: 
+  chunk_output_type: console
+---
+```{r}
+library(here)
+library(tidyverse)
+library(dplyr)
+library(janitor)
+```
+
+```{r}
+bird_observations <- read_csv(here("data", "52_pp52_birds_1.csv")) %>% clean_names()
+
+sites <- read_csv(here("data", "52_pp52_sites_1.csv")) %>% clean_names() 
+
+surveys <- read_csv(here("data", "52_pp52_surveys_1.csv")) %>% clean_names()
+
+taxalist <- read_csv(here("data", "52_pp52_taxalist_1.csv")) %>% clean_names()
+```
+
+```{r}
+birds_subset <- bird_observations %>%
+  filter(site_id %in% c("LI-W", "NU-C")) %>%
+  filter(species_id %in% c("BHCO", "RWBL"))
+  
+```
+
+```{r}
+birds_left <- left_join(birds_subset,
+                        sites, by = join_by(site_id)) %>%
+                          left_join(., taxalist, by = join_by(species_id))
+
+```
+
+
+```{r}
+# To combine both columns. From sites: site id, park code, park district, park name, point code, point location, park acreage. From bird subset: survey id, species id, distance, bird count, notes, seen, heard, direction. For 15 total columns.
+
+birds_full <- full_join(birds_subset, sites, join_by(site_id))
+```
+
+```{r}
+# Task 2
+```
+
